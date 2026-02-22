@@ -186,7 +186,7 @@ async function parseErrorResponse(response) {
         message = `${message} Detail: ${detail}`;
       }
     }
-  } catch (_error) {
+  } catch {
     // Keep default message.
   }
   return message;

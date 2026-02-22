@@ -1,0 +1,10 @@
+{
+  "name": "photoroom-api-playground",
+  "private": true,
+  "scripts": {
+    "lint:js": "eslint app/static/script.js"
+  },
+  "devDependencies": {
+    "eslint": "^9.22.0"
+  }
+}

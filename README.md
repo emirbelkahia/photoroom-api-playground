@@ -1,5 +1,9 @@
 # Photoroom API Playground
 
+[![CI](https://github.com/emirbelkahia/photoroom-api-playground/actions/workflows/ci.yml/badge.svg)](https://github.com/emirbelkahia/photoroom-api-playground/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Tag](https://img.shields.io/github/v/tag/emirbelkahia/photoroom-api-playground?label=tag)](https://github.com/emirbelkahia/photoroom-api-playground/tags)
+
 This folder contains a minimal web demo with two clear modes:
 
 1. `Remove background` using `POST /v1/segment`
@@ -57,7 +61,7 @@ Lifestyle output:
 - Build an educational but potentially useful demo for small e-commerce apparel teams.
 - Keep the implementation intentionally minimal and explainable while covering two real output needs:
   - catalog-oriented product visual
-- lifestyle-oriented marketing visual
+  - lifestyle-oriented marketing visual
 - Use FastAPI because it is lightweight, quick to iterate, easy to read in public repos, and provides a clean API proxy layer for frontend demos.
 
 ## Official Photoroom documentation
