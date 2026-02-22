@@ -57,8 +57,17 @@ Lifestyle output:
 - Build an educational but potentially useful demo for small e-commerce apparel teams.
 - Keep the implementation intentionally minimal and explainable while covering two real output needs:
   - catalog-oriented product visual
-  - lifestyle-oriented marketing visual
+- lifestyle-oriented marketing visual
 - Use FastAPI because it is lightweight, quick to iterate, easy to read in public repos, and provides a clean API proxy layer for frontend demos.
+
+## Official Photoroom documentation
+
+- Photoroom API overview: https://www.photoroom.com/api/
+- API reference (OpenAPI): https://docs.photoroom.com/getting-started/api-reference-openapi
+- Remove background quickstart: https://docs.photoroom.com/remove-background-api-basic-plan
+- Describe Any Change: https://docs.photoroom.com/image-editing-api-plus-plan/alpha-describe-any-change
+- Positioning options: https://docs.photoroom.com/image-editing-api-plus-plan/positioning
+- Photoroom GitHub organization: https://github.com/Photoroom
 
 ## Prompt management
 
