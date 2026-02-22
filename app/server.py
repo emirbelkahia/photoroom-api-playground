@@ -19,6 +19,10 @@ DEFAULT_SEGMENT_URL = "https://sdk.photoroom.com/v1/segment"
 DEFAULT_EDIT_URL = "https://image-api.photoroom.com/v2/edit"
 DEFAULT_TIMEOUT_SECONDS = 60
 DEFAULT_MAX_UPLOAD_BYTES = 10 * 1024 * 1024
+DOCS_API_REFERENCE_URL = "https://docs.photoroom.com/getting-started/api-reference-openapi"
+DOCS_SEGMENT_QUICKSTART_URL = "https://docs.photoroom.com/remove-background-api-basic-plan"
+DOCS_DESCRIBE_ANY_CHANGE_URL = "https://docs.photoroom.com/image-editing-api-plus-plan/alpha-describe-any-change"
+DOCS_POSITIONING_URL = "https://docs.photoroom.com/image-editing-api-plus-plan/positioning"
 
 DEFAULT_GHOST_MANNEQUIN_PROMPT = (
     "Transform the main clothing item into a realistic ghost mannequin product photo. "
@@ -208,6 +212,7 @@ def home() -> FileResponse:
 
 @app.get("/api/demo-info")
 def demo_info() -> dict[str, object]:
+    """Expose demo wiring so the UI (and reviewers) can inspect current runtime config."""
     api_key = os.getenv("PHOTOROOM_API_KEY", "").strip()
     require_sandbox = _as_bool("PHOTOROOM_REQUIRE_SANDBOX", True)
 
@@ -221,6 +226,12 @@ def demo_info() -> dict[str, object]:
         "advanced_provider_endpoint": {
             "method": "POST",
             "url": os.getenv("PHOTOROOM_EDIT_URL", DEFAULT_EDIT_URL).strip() or DEFAULT_EDIT_URL,
+        },
+        "provider_docs": {
+            "api_reference": DOCS_API_REFERENCE_URL,
+            "segment_quickstart": DOCS_SEGMENT_QUICKSTART_URL,
+            "describe_any_change": DOCS_DESCRIBE_ANY_CHANGE_URL,
+            "positioning": DOCS_POSITIONING_URL,
         },
         "auth_header": "x-api-key",
         "sandbox_mode": {
@@ -256,6 +267,7 @@ def demo_info() -> dict[str, object]:
 
 @app.post("/api/remove-bg")
 async def remove_background(image_file: UploadFile = File(...)) -> Response:
+    """Proxy remove-background calls to Photoroom /v1/segment with input validation."""
     api_key, error = _validated_api_key()
     if error:
         return error
@@ -347,6 +359,7 @@ async def advanced_edit(
     output_variant: str = Form("ghost_mannequin"),
     background_color: str = Form(""),
 ) -> Response:
+    """Run one advanced /v2/edit pass for a chosen business variant."""
     api_key, error = _validated_api_key()
     if error:
         return error

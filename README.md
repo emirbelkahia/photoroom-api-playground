@@ -73,7 +73,7 @@ The backend loads these files at request time and falls back to internal default
 
 - `POST /api/remove-bg`
 - `POST /api/advanced-edit`
-- `GET /api/demo-info`
+- `GET /api/demo-info` (runtime config + Photoroom documentation links)
 
 ## Upload limits and formats
 
