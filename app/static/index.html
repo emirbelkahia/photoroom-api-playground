@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Photoroom API Playground</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="page-glow" aria-hidden="true"></div>
+    <main class="layout">
+      <section class="main-panel">
+        <header class="hero">
+          <p class="eyebrow">Technical Demo</p>
+          <h1>Photoroom API Playground</h1>
+          <p class="subtitle">
+            Explore two practical apparel image workflows: transparent cutout generation and dual-output product editing from one upload.
+          </p>
+        </header>
+
+        <div class="mode-tabs" role="tablist" aria-label="Demo modes">
+          <button
+            id="modeTabRemove"
+            class="mode-tab is-active"
+            type="button"
+            role="tab"
+            aria-selected="true"
+            aria-controls="removeBgView"
+          >
+            Remove background
+          </button>
+          <button
+            id="modeTabAdvanced"
+            class="mode-tab"
+            type="button"
+            role="tab"
+            aria-selected="false"
+            aria-controls="advancedView"
+          >
+            Apparel workflow
+          </button>
+        </div>
+
+        <section id="removeBgView" class="mode-view" role="tabpanel" aria-labelledby="modeTabRemove">
+          <div class="upload-card">
+            <label class="upload-field" for="imageInput">
+              <span class="upload-title">Choose an image</span>
+              <span class="upload-hint" id="fileLabel">PNG, JPG, WEBP, HEIC/HEIF up to 10 MB</span>
+              <input id="imageInput" type="file" accept="image/*,.heic,.heif" />
+            </label>
+
+            <div class="actions">
+              <button id="processBtn" class="btn btn-primary" disabled>Remove background</button>
+              <a id="downloadBtn" class="btn btn-secondary is-disabled" download="image-no-bg.png">Download PNG</a>
+            </div>
+
+            <p id="statusLine" class="status status-neutral">Upload an image to start.</p>
+          </div>
+
+          <section id="compareStage" class="compare-stage" hidden>
+            <div class="compare-frame">
+              <img id="afterImage" class="compare-image" alt="Image without background" />
+              <div id="beforeLayer" class="before-layer">
+                <img id="beforeImage" class="compare-image" alt="Original image with background" />
+              </div>
+              <div id="compareLine" class="compare-line" aria-hidden="true"></div>
+              <span class="badge badge-left">Before</span>
+              <span class="badge badge-right">After</span>
+            </div>
+
+            <label for="compareSlider" class="slider-label">Drag to compare</label>
+            <input id="compareSlider" class="slider" type="range" min="0" max="100" value="50" />
+          </section>
+        </section>
+
+        <section id="advancedView" class="mode-view advanced-view" role="tabpanel" aria-labelledby="modeTabAdvanced" hidden>
+          <div class="advanced-card">
+            <p class="advanced-eyebrow">Dual Output Workflow</p>
+            <h2>Dual Output Generation</h2>
+            <p>
+              Upload one clothing image and generate two outputs from the same input:
+              a ghost mannequin visual and a lifestyle staging visual.
+            </p>
+            <ul class="advanced-list">
+              <li><code>POST /v2/edit</code> with <code>describeAnyChange.mode=ai.auto</code>.</li>
+              <li>Pass 1: prompt file <code>app/prompts/ghost_mannequin.txt</code>.</li>
+              <li>Pass 2: prompt file <code>app/prompts/lifestyle_staging.txt</code>.</li>
+              <li>Output 1: transparent cutout is re-placed on a controlled solid color using <code>background.color</code>.</li>
+              <li>Output 2: lifestyle visual keeps a natural scene background (<code>removeBackground=false</code>).</li>
+              <li><code>referenceBox=subjectBox</code> + portrait <code>outputSize</code> + low <code>padding</code> for tighter framing.</li>
+            </ul>
+          </div>
+
+          <div class="upload-card">
+            <label class="upload-field" for="advancedImageInput">
+              <span class="upload-title">Choose a product image</span>
+              <span class="upload-hint" id="advancedFileLabel">PNG, JPG, WEBP up to 10 MB (HEIC/HEIF only in Remove mode)</span>
+              <input id="advancedImageInput" type="file" accept="image/*,.heic,.heif" />
+            </label>
+
+            <div class="swatch-row">
+              <span class="upload-title">Background color</span>
+              <div id="advancedBackgroundPalette" class="swatch-palette" role="radiogroup" aria-label="Ghost mannequin background color presets">
+                <button type="button" class="swatch-chip is-active" data-color="FFFFFF" style="--chip:#FFFFFF" aria-checked="true" role="radio" title="Pure white"></button>
+                <button type="button" class="swatch-chip" data-color="F2F4F7" style="--chip:#F2F4F7" aria-checked="false" role="radio" title="Light gray"></button>
+                <button type="button" class="swatch-chip" data-color="EAF7EE" style="--chip:#EAF7EE" aria-checked="false" role="radio" title="Light green"></button>
+                <button type="button" class="swatch-chip" data-color="FFEAF4" style="--chip:#FFEAF4" aria-checked="false" role="radio" title="Light pink"></button>
+                <button type="button" class="swatch-chip" data-color="EAF2FF" style="--chip:#EAF2FF" aria-checked="false" role="radio" title="Light blue"></button>
+              </div>
+              <div class="swatch-control">
+                <span id="advancedBackgroundColorValue" class="swatch-value">#FFFFFF</span>
+              </div>
+              <span class="upload-hint">Applied to the Ghost Mannequin output through <code>background.color</code>.</span>
+            </div>
+
+            <div class="actions">
+              <button id="advancedProcessBtn" class="btn btn-primary" disabled>Generate</button>
+              <a id="advancedDownloadBtn" class="btn btn-secondary is-disabled" download="image-ghost-mannequin.png">Download current output</a>
+            </div>
+
+            <p id="advancedStatusLine" class="status status-neutral">Upload a clothing image to generate both outputs.</p>
+          </div>
+
+          <section id="advancedResultsStage" class="advanced-results" hidden>
+            <div class="advanced-result-card">
+              <p class="advanced-result-title">Input</p>
+              <div class="advanced-result-frame">
+                <img id="advancedBeforeImage" class="advanced-result-image" alt="Original product image" />
+              </div>
+            </div>
+
+            <div class="advanced-result-card">
+              <p class="advanced-result-title">Output</p>
+              <div class="advanced-result-frame">
+                <div id="advancedGeneratingPlaceholder" class="generation-placeholder" hidden>
+                  <div class="generation-silhouette" aria-hidden="true"></div>
+                  <p>Generating outputs...</p>
+                </div>
+                <img id="advancedOutputImage" class="advanced-result-image" alt="Generated output image" />
+              </div>
+              <div class="carousel-controls">
+                <button id="advancedOutputPrevBtn" class="carousel-btn" type="button" disabled>Previous</button>
+                <p id="advancedOutputLabel" class="carousel-label">No output yet</p>
+                <button id="advancedOutputNextBtn" class="carousel-btn" type="button" disabled>Next</button>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <p class="main-meta">
+          Demo built and validated with a Photoroom sandbox API key.
+        </p>
+      </section>
+
+      <aside class="side-panel">
+        <section id="sidePanelRemove">
+          <h2>What this demo does</h2>
+          <p>
+            This mode uses the Remove Background API to process one image and display a before/after slider.
+          </p>
+          <p class="stack-note">Stack: FastAPI backend proxy + vanilla HTML/CSS/JS frontend.</p>
+
+          <h3>Endpoint used in this mode</h3>
+          <ul class="endpoint-list">
+            <li>
+              <span class="method method-post">POST</span>
+              <code>https://sdk.photoroom.com/v1/segment</code>
+              <p>
+                Official docs:
+                <a href="https://docs.photoroom.com/remove-background-api-basic-plan" target="_blank" rel="noopener noreferrer">Quickstart guide</a>
+                and
+                <a href="https://docs.photoroom.com/getting-started/api-reference-openapi" target="_blank" rel="noopener noreferrer">API reference</a>.
+              </p>
+            </li>
+          </ul>
+        </section>
+
+        <section id="sidePanelAdvanced" hidden>
+          <h2>Use case: Apparel dual output</h2>
+          <p>
+            This mode creates two visuals from one upload:
+            a controlled ghost mannequin catalog image and a real-life lifestyle staging image.
+          </p>
+          <p class="stack-note">Stack: FastAPI backend proxy + vanilla HTML/CSS/JS frontend.</p>
+
+          <h3>Endpoint used in this mode</h3>
+          <ul class="endpoint-list">
+            <li>
+              <span class="method method-post">POST</span>
+              <code>https://image-api.photoroom.com/v2/edit</code>
+              <p>
+                Official docs:
+                <a href="https://docs.photoroom.com/getting-started/api-reference-openapi" target="_blank" rel="noopener noreferrer">API reference</a>
+                and
+                <a href="https://docs.photoroom.com/image-editing-api-plus-plan/alpha-describe-any-change" target="_blank" rel="noopener noreferrer">Describe Any Change</a>.
+              </p>
+            </li>
+          </ul>
+
+          <h3>How It Works</h3>
+          <ul class="feature-list">
+            <li>
+              <p class="feature-title">
+                <a href="https://docs.photoroom.com/image-editing-api-plus-plan/alpha-describe-any-change" target="_blank" rel="noopener noreferrer">Describe Any Change</a>
+              </p>
+              <p>Option used: <code>describeAnyChange.mode=ai.auto</code>.</p>
+              <p>Prompt source: editable files in <code>app/prompts/</code> (ghost mannequin and lifestyle staging).</p>
+            </li>
+            <li>
+              <p class="feature-title">
+                <a href="https://docs.photoroom.com/getting-started/api-reference-openapi" target="_blank" rel="noopener noreferrer">Background color</a>
+              </p>
+              <p>Option used: <code>background.color</code> (set from a fixed light-palette swatch)</p>
+              <p>Applied only to output 1 (ghost mannequin) for catalog consistency.</p>
+            </li>
+            <li>
+              <p class="feature-title">
+                <a href="https://docs.photoroom.com/image-editing-api-plus-plan/positioning" target="_blank" rel="noopener noreferrer">Framing control</a>
+              </p>
+              <p>Options used: <code>referenceBox=subjectBox</code> + portrait <code>outputSize</code> + low <code>padding</code>.</p>
+              <p>Business value: avoids outputs that are too close to edges and improves catalog consistency.</p>
+            </li>
+            <li>
+              <p class="feature-title">
+                <a href="https://docs.photoroom.com/image-editing-api-plus-plan/which-image-sizes-and-formats-are-supported" target="_blank" rel="noopener noreferrer">Output format</a>
+              </p>
+              <p>Option used: <code>export.format=png</code></p>
+              <p>Business value: keeps a high-quality master asset for catalog and channel derivatives.</p>
+            </li>
+          </ul>
+
+          <h3>Practical workflow</h3>
+          <ul class="feature-list">
+            <li>
+              <p class="feature-title">1. Upload</p>
+              <p>Upload one garment photo from studio intake.</p>
+            </li>
+            <li>
+              <p class="feature-title">2. Transform</p>
+              <p>The backend runs two Photoroom <code>/v2/edit</code> generations (ghost mannequin, then lifestyle staging).</p>
+            </li>
+            <li>
+              <p class="feature-title">3. Review</p>
+              <p>Review outputs in the carousel and download the currently displayed visual.</p>
+            </li>
+          </ul>
+        </section>
+      </aside>
+    </main>
+
+    <script src="/static/script.js"></script>
+  </body>
+</html>
